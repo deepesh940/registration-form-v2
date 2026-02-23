@@ -123,6 +123,34 @@ export function Step3AddressInfo({ data, updateData, onNext, onPrev }: Props) {
 
                 <div style={{ display: 'flex' }}>
                     <div style={{ flex: 1, position: 'relative' }}>
+                        <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 2 }}>State <span style={{ color: '#d89c3a' }}>*</span></label>
+                        <select
+                            className="glass-input"
+                            value={data.address.state}
+                            onChange={e => updateData({ address: { ...data.address, state: e.target.value, city: '' } })}
+                            required
+                            style={{
+                                width: '100%',
+                                paddingTop: '12px',
+                                paddingBottom: '12px',
+                                color: data.address.state ? 'inherit' : '#999',
+                                appearance: 'none',
+                                backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")',
+                                backgroundRepeat: 'no-repeat',
+                                backgroundPosition: 'right .7em top 50%',
+                                backgroundSize: '.65em auto',
+                                borderRadius: '4px 0 0 4px',
+                                borderRight: 'none'
+                            }}
+                        >
+                            <option value="" disabled>Select State</option>
+                            {Object.keys(MOCK_CITIES_BY_STATE).map(state => (
+                                <option key={state} value={state}>{state}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div style={{ flex: 1, position: 'relative' }}>
                         <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 2 }}>City <span style={{ color: '#d89c3a' }}>*</span></label>
                         <select
                             className="glass-input"
@@ -141,8 +169,7 @@ export function Step3AddressInfo({ data, updateData, onNext, onPrev }: Props) {
                                 backgroundPosition: 'right .7em top 50%',
                                 backgroundSize: '.65em auto',
                                 opacity: !data.address.state ? 0.6 : 1,
-                                borderRadius: '4px 0 0 4px',
-                                borderRight: 'none'
+                                borderRadius: '0 4px 4px 0'
                             }}
                         >
                             <option value="" disabled>{data.address.state ? 'Select City' : 'Select State First'}</option>
@@ -151,44 +178,17 @@ export function Step3AddressInfo({ data, updateData, onNext, onPrev }: Props) {
                             ))}
                         </select>
                     </div>
-
-                    <div style={{ flex: 1, position: 'relative' }}>
-                        <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 2 }}>State <span style={{ color: '#d89c3a' }}>*</span></label>
-                        <select
-                            className="glass-input"
-                            value={data.address.state}
-                            onChange={e => updateData({ address: { ...data.address, state: e.target.value, city: '' } })}
-                            required
-                            style={{
-                                width: '100%',
-                                paddingTop: '12px',
-                                paddingBottom: '12px',
-                                color: data.address.state ? 'inherit' : '#999',
-                                appearance: 'none',
-                                backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")',
-                                backgroundRepeat: 'no-repeat',
-                                backgroundPosition: 'right .7em top 50%',
-                                backgroundSize: '.65em auto',
-                                borderRadius: '0 4px 4px 0'
-                            }}
-                        >
-                            <option value="" disabled>Select State</option>
-                            {Object.keys(MOCK_CITIES_BY_STATE).map(state => (
-                                <option key={state} value={state}>{state}</option>
-                            ))}
-                        </select>
-                    </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div style={{ position: 'relative' }}>
-                        <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Zip Code <span style={{ color: '#d89c3a' }}>*</span></label>
-                        <input type="text" className="glass-input" value={data.address.zipCode} onChange={e => updateAddress('zipCode', e.target.value)} required placeholder="12345" maxLength={10} style={{ paddingTop: '12px', paddingBottom: '12px' }} />
+                        <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Country <span style={{ color: '#d89c3a' }}>*</span></label>
+                        <input type="text" className="glass-input" value="United States" disabled style={{ paddingTop: '12px', paddingBottom: '12px', background: '#f5f5f5', color: '#999' }} />
                     </div>
 
                     <div style={{ position: 'relative' }}>
-                        <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Country <span style={{ color: '#d89c3a' }}>*</span></label>
-                        <input type="text" className="glass-input" value="United States" disabled style={{ paddingTop: '12px', paddingBottom: '12px', background: '#f5f5f5', color: '#999' }} />
+                        <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Zip Code <span style={{ color: '#d89c3a' }}>*</span></label>
+                        <input type="text" className="glass-input" value={data.address.zipCode} onChange={e => updateAddress('zipCode', e.target.value)} required placeholder="12345" maxLength={10} style={{ paddingTop: '12px', paddingBottom: '12px' }} />
                     </div>
                 </div>
 
