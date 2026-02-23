@@ -95,9 +95,9 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
         <div className="animate-fade-in" style={{ width: '100%' }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '1.5rem', marginBottom: '0.2rem', color: 'var(--text-main)', fontWeight: '700' }}>Registration Process</h1>
-                <div style={{ marginBottom: '1.2rem' }}>
-                    <span style={{ display: 'block', fontSize: '0.75rem', color: '#999', marginBottom: '2px' }}>Registered Email Address</span>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>{data.email}</p>
+                <div style={{ marginBottom: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#999' }}>Registered Email Address:</span>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0, fontWeight: '500' }}>{data.email}</p>
                 </div>
 
                 <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: '600' }}>Basic Information</h2>
