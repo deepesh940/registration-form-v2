@@ -100,7 +100,7 @@ export function Step1EmailCapture({ data, updateData, onNext, onResume }: Props)
     return (
         <div className="animate-fade-in" style={{ width: '100%' }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: '600' }}>Registration process</h2>
+                <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: '600' }}>Registration Process</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
                     Please enter your email to start your application.
                 </p>
