@@ -135,7 +135,7 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
 
                     <div style={{ position: 'relative' }}>
                         <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Gender <span style={{ color: '#d89c3a' }}>*</span></label>
-                        <select className="glass-input" value={data.gender} onChange={e => updateData({ gender: e.target.value })} required style={{ paddingTop: '12px', paddingBottom: '12px', color: data.gender ? 'inherit' : '#999' }}>
+                        <select className="glass-input" value={data.gender} onChange={e => updateData({ gender: e.target.value })} required style={{ paddingTop: '12px', paddingBottom: '12px', color: data.gender ? 'inherit' : '#999', fontSize: data.gender ? '0.95rem' : '0.8rem' }}>
                             <option value="" disabled>Select Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -145,7 +145,7 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
 
                     <div style={{ position: 'relative' }}>
                         <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Marital Status <span style={{ color: '#d89c3a' }}>*</span></label>
-                        <select className="glass-input" value={data.maritalStatus} onChange={e => updateData({ maritalStatus: e.target.value })} required style={{ paddingTop: '12px', paddingBottom: '12px', color: data.maritalStatus ? 'inherit' : '#999' }}>
+                        <select className="glass-input" value={data.maritalStatus} onChange={e => updateData({ maritalStatus: e.target.value })} required style={{ paddingTop: '12px', paddingBottom: '12px', color: data.maritalStatus ? 'inherit' : '#999', fontSize: data.maritalStatus ? '0.95rem' : '0.8rem' }}>
                             <option value="" disabled>Select Marital Status</option>
                             <option value="Single">Single</option>
                             <option value="Married">Married</option>
@@ -177,7 +177,7 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
                             placeholder="(123) 456-7890"
                             maxLength={14}
                             required
-                            style={{ paddingTop: '12px', paddingBottom: '12px', textAlign: 'center' }}
+                            style={{ paddingTop: '12px', paddingBottom: '12px', textAlign: 'center', fontSize: data.mobileNumber ? '0.95rem' : '0.8rem' }}
                         />
                     </div>
                 )}

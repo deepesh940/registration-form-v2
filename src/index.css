@@ -101,6 +101,16 @@ body::before {
   /* Mustard focus outline */
 }
 
+.glass-input::placeholder {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+/* For Select 'placeholders' */
+select.glass-input option[value=""][disabled] {
+  font-size: 0.8rem;
+}
+
 /* Buttons */
 .btn-primary {
   background: var(--primary);
