@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { RegistrationState } from '../types/registration';
 import '../index.css';
 
@@ -14,6 +14,17 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
     const [otp, setOtp] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [resendTimer, setResendTimer] = useState(0);
+
+    useEffect(() => {
+        let interval: ReturnType<typeof setInterval>;
+        if (showOtp && resendTimer > 0) {
+            interval = setInterval(() => {
+                setResendTimer((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [showOtp, resendTimer]);
 
     const handleSendOtp = (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,6 +35,7 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
         setError('');
         // Simulate sending OTP
         setShowOtp(true);
+        setResendTimer(60);
         updateData({ email });
     };
 
@@ -39,9 +51,11 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
     };
 
     const handleResendOtp = () => {
+        if (resendTimer > 0) return;
         setError('');
         setOtp('');
         setSuccessMessage('A new verification code has been sent.');
+        setResendTimer(60);
         setTimeout(() => setSuccessMessage(''), 3000);
     };
 
@@ -123,16 +137,17 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
                         <button
                             type="button"
                             onClick={handleResendOtp}
+                            disabled={resendTimer > 0}
                             style={{
                                 background: 'none',
                                 border: 'none',
-                                color: '#d89c3a',
-                                cursor: 'pointer',
+                                color: resendTimer > 0 ? '#999' : '#d89c3a',
+                                cursor: resendTimer > 0 ? 'not-allowed' : 'pointer',
                                 fontSize: '0.85rem',
-                                textDecoration: 'underline'
+                                textDecoration: resendTimer > 0 ? 'none' : 'underline'
                             }}
                         >
-                            Didn't receive the code? Resend
+                            {resendTimer > 0 ? `Resend code in ${resendTimer}s` : "Didn't receive the code? Resend"}
                         </button>
                     </div>
 
@@ -149,6 +164,7 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
                                 setOtp('');
                                 setError('');
                                 setSuccessMessage('');
+                                setResendTimer(0);
                             }}
                         >
                             Change Email
