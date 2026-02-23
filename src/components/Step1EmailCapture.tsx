@@ -113,7 +113,16 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
                     {error && <div style={{ color: 'var(--error)', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
 
                     <div className="form-actions" style={{ gap: '1rem', marginTop: '1rem' }}>
-                        <button type="button" className="btn-secondary" style={{ flex: 1, minWidth: 'auto' }} onClick={() => setShowOtp(false)}>
+                        <button
+                            type="button"
+                            className="btn-secondary"
+                            style={{ flex: 1, minWidth: 'auto' }}
+                            onClick={() => {
+                                setShowOtp(false);
+                                setOtp('');
+                                setError('');
+                            }}
+                        >
                             Change Email
                         </button>
                         <button type="submit" className="btn-primary" style={{ flex: 1, minWidth: 'auto' }} disabled={otp.length !== 4}>
