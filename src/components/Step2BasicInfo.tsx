@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { RegistrationState } from '../types/registration';
 import '../index.css';
 
@@ -13,6 +13,18 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
     const [showMobileOtp, setShowMobileOtp] = useState(data.isMobileVerified);
     const [otp, setOtp] = useState('');
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [resendTimer, setResendTimer] = useState(0);
+
+    useEffect(() => {
+        let interval: ReturnType<typeof setInterval>;
+        if (showMobileOtp && resendTimer > 0) {
+            interval = setInterval(() => {
+                setResendTimer((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [showMobileOtp, resendTimer]);
 
     const formatPhoneNumber = (value: string) => {
         // Remove all non-digits
@@ -47,6 +59,7 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
             }
             setError('');
             setShowMobileOtp(true); // Simulate OTP sent
+            setResendTimer(60);
             return;
         }
 
@@ -54,8 +67,11 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
             if (otp === '1234') { // Mock OTP logic
                 updateData({ isMobileVerified: true });
                 setShowMobileOtp(false);
+                setResendTimer(0);
+                setSuccessMessage('');
             } else {
                 setError('Invalid OTP. Please try 1234.');
+                setSuccessMessage('');
                 return;
             }
         }
@@ -64,6 +80,15 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
         if (data.isMobileVerified || otp === '1234') {
             onNext();
         }
+    };
+
+    const handleResendOtp = () => {
+        if (resendTimer > 0) return;
+        setError('');
+        setOtp('');
+        setSuccessMessage('A new verification code has been sent.');
+        setResendTimer(60);
+        setTimeout(() => setSuccessMessage(''), 3000);
     };
 
     return (
@@ -155,6 +180,23 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
                         <div style={{ position: 'relative', width: '100%', maxWidth: '200px' }}>
                             <input type="text" className="glass-input" value={otp} onChange={e => setOtp(e.target.value)} placeholder="Enter 4-digit OTP (1234)" maxLength={4} required style={{ paddingTop: '12px', paddingBottom: '12px', textAlign: 'center', letterSpacing: '2px' }} />
                         </div>
+                        <div style={{ textAlign: 'center', marginTop: '-0.5rem' }}>
+                            <button
+                                type="button"
+                                onClick={handleResendOtp}
+                                disabled={resendTimer > 0}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: resendTimer > 0 ? '#999' : '#d89c3a',
+                                    cursor: resendTimer > 0 ? 'not-allowed' : 'pointer',
+                                    fontSize: '0.85rem',
+                                    padding: '4px 8px'
+                                }}
+                            >
+                                {resendTimer > 0 ? `Resend code in ${resendTimer}s` : "Didn't receive the code? Resend"}
+                            </button>
+                        </div>
                     </div>
                 )}
 
@@ -165,6 +207,7 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
                 )}
 
                 {error && <div style={{ color: 'var(--error)', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
+                {successMessage && <div style={{ color: 'green', fontSize: '0.9rem', textAlign: 'center' }}>{successMessage}</div>}
 
                 <div className="form-actions" style={{ gap: '1rem' }}>
                     <button type="button" className="btn-secondary" style={{ flex: 1, minWidth: 'auto' }} onClick={onPrev}>
