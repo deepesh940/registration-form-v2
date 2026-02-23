@@ -13,6 +13,7 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
     const [showOtp, setShowOtp] = useState(false);
     const [otp, setOtp] = useState('');
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     const handleSendOtp = (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,7 +34,15 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
             onNext();
         } else {
             setError('Invalid OTP. Please try 1234.');
+            setSuccessMessage('');
         }
+    };
+
+    const handleResendOtp = () => {
+        setError('');
+        setOtp('');
+        setSuccessMessage('A new verification code has been sent.');
+        setTimeout(() => setSuccessMessage(''), 3000);
     };
 
     return (
@@ -110,7 +119,25 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
                         </div>
                     </div>
 
+                    <div style={{ textAlign: 'center', marginTop: '0.25rem' }}>
+                        <button
+                            type="button"
+                            onClick={handleResendOtp}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#d89c3a',
+                                cursor: 'pointer',
+                                fontSize: '0.85rem',
+                                textDecoration: 'underline'
+                            }}
+                        >
+                            Didn't receive the code? Resend
+                        </button>
+                    </div>
+
                     {error && <div style={{ color: 'var(--error)', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
+                    {successMessage && <div style={{ color: 'green', fontSize: '0.9rem', textAlign: 'center' }}>{successMessage}</div>}
 
                     <div className="form-actions" style={{ gap: '1rem', marginTop: '1rem' }}>
                         <button
@@ -121,6 +148,7 @@ export function Step1EmailCapture({ data, updateData, onNext }: Props) {
                                 setShowOtp(false);
                                 setOtp('');
                                 setError('');
+                                setSuccessMessage('');
                             }}
                         >
                             Change Email
