@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Exact Colors from Target Design */
+  --bg-top: #a17f27;
+  /* Mustard/Gold-brown top section */
+  --bg-bottom: #f2f2f2;
+  /* Light grey bottom section */
+
+  --primary: #000000;
+  /* Black used for active Next buttons */
+  --primary-hover: #333333;
+  --text-main: #333333;
+  --text-muted: #666666;
+  --border-color: #e0e0e0;
+
+  --success: #4caf50;
+  --error: #d32f2f;
+
+  font-family: 'Inter', -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  color: var(--text-main);
+  background-color: var(--bg-bottom);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Split Background Logic */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 35vh;
+  /* Extends approx 35% down the screen */
+  background-color: var(--bg-top);
+  z-index: -1;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+/* Main White Card Container */
+.registration-card {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 650px;
+  min-height: 400px;
+  margin-top: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  /* Soft drop shadow */
+  padding: 3rem 4rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  /* For absolutely positioning the dots */
+}
+
+/* Form Elements Minimalist Look */
+.glass-input {
+  /* Renaming class usage later, but keeping functionality */
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-main);
+  padding: 10px 12px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.glass-input:focus {
+  border-color: var(--bg-top);
+  /* Mustard focus outline */
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 140px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+  background: #959595;
+  color: white;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--text-main);
+  border: 1px solid var(--text-muted);
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 140px;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f9f9f9;
+}
+
+/* Headers */
+h1,
+h2,
+h3 {
+  color: var(--text-main);
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Typography Overrides */
+label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Standardizing the dual button wrapper */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  padding-bottom: 2rem;
+  /* Make room for pagination dots */
+}
+
+/* Pagination Dots Wrapper (Inside card, bottom) */
+.pagination-dots {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--border-color);
+}
+
+.dot.active {
+  background-color: var(--bg-top);
+  /* Mustard colored active dot */
+}
