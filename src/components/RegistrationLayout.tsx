@@ -173,7 +173,7 @@ export function RegistrationLayout() {
                         isAddressVerified: true,
                         idType: "Driver's License",
                         idNumber: 'D12345678',
-                        idIssueCountry: 'United States',
+                        idIssueCountry: 'Nigeria',
                         isUsCitizen: true,
                         ssn: '123-45-6789',
                         secondaryApplicant: {
@@ -195,7 +195,7 @@ export function RegistrationLayout() {
                             isAddressVerified: true,
                             idType: "Passport",
                             idNumber: 'P98765432',
-                            idIssueCountry: 'United Kingdom',
+                            idIssueCountry: 'Kenya',
                             idDocument: 'passport_copy.pdf',
                             isUsCitizen: false,
                             ssn: '',

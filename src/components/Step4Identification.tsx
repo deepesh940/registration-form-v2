@@ -14,16 +14,20 @@ export function Step4Identification({ data, updateData, onNext, onPrev }: Props)
     const [primarySsnFocused, setPrimarySsnFocused] = useState(false);
     const [secondarySsnFocused, setSecondarySsnFocused] = useState(false);
     const countries = [
-        "United States",
-        "United Kingdom",
-        "Canada",
-        "Australia",
-        "India",
-        "Germany",
-        "France",
-        "Japan",
-        "UAE",
-        "Singapore"
+        "Nigeria",
+        "Ethiopia",
+        "Egypt",
+        "DR Congo",
+        "Tanzania",
+        "South Africa",
+        "Kenya",
+        "Uganda",
+        "Algeria",
+        "Sudan",
+        "Morocco",
+        "Angola",
+        "Ghana",
+        "Ivory Coast"
     ];
 
     const formatSsn = (val: string) => {
