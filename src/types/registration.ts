@@ -17,13 +17,11 @@ export interface ApplicantDetails {
   birthday: string;
   motherMaidenName: string;
   maritalStatus: string;
-  mobileNumber: string;
-  countryCode: string;
-  isMobileVerified: boolean;
   address: Address;
   isAddressVerified: boolean;
   idType: string;
   idNumber: string;
+  idIssueCountry: string;
   idDocument?: string;
   isUsCitizen: boolean;
   ssn?: string;
@@ -33,6 +31,9 @@ export interface RegistrationState extends ApplicantDetails {
   step: Step;
   email: string;
   isEmailVerified: boolean;
+  mobileNumber: string;
+  countryCode: string;
+  isMobileVerified: boolean;
   accountType: 'Single' | 'Joint';
   secondaryApplicant?: ApplicantDetails;
   paymentStatus: 'pending' | 'completed' | 'failed';

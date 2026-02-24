@@ -23,14 +23,11 @@ const countryCodes = [
 ];
 
 export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
-    const [showMobileOtp, setShowMobileOtp] = useState(data.isMobileVerified);
-    const [showSecondaryOtp, setShowSecondaryOtp] = useState(data.secondaryApplicant?.isMobileVerified || false);
+    const [showMobileOtp, setShowMobileOtp] = useState(false);
     const [otp, setOtp] = useState('');
-    const [secondaryOtp, setSecondaryOtp] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [resendTimer, setResendTimer] = useState(0);
-    const [secondaryResendTimer, setSecondaryResendTimer] = useState(0);
 
     useEffect(() => {
         let interval: ReturnType<typeof setInterval>;
@@ -41,16 +38,6 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
         }
         return () => clearInterval(interval);
     }, [showMobileOtp, resendTimer]);
-
-    useEffect(() => {
-        let interval: ReturnType<typeof setInterval>;
-        if (showSecondaryOtp && secondaryResendTimer > 0) {
-            interval = setInterval(() => {
-                setSecondaryResendTimer((prev) => prev - 1);
-            }, 1000);
-        }
-        return () => clearInterval(interval);
-    }, [showSecondaryOtp, secondaryResendTimer]);
 
     const formatPhoneNumber = (value: string, countryCode: string) => {
         // Only apply special formatting for US/Canada (+1)
@@ -78,13 +65,7 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
     const renderApplicantFields = (
         title: string,
         applicantData: ApplicantDetails,
-        isSecondary: boolean,
-        showOtpLocal: boolean,
-        otpLocal: string,
-        setOtpLocal: (otp: string) => void,
-        resendTimerLocal: number,
-        handleResendOtpLocal: () => void,
-        isVerified: boolean
+        isSecondary: boolean
     ) => {
         const updateField = (fields: Partial<ApplicantDetails>) => {
             if (isSecondary) {
@@ -151,52 +132,6 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
                     <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Mother's Maiden Name <span style={{ color: '#d89c3a' }}>*</span></label>
                     <input type="text" className="glass-input" value={applicantData.motherMaidenName} onChange={e => updateField({ motherMaidenName: e.target.value })} required style={{ paddingTop: '12px', paddingBottom: '12px' }} />
                 </div>
-
-                {!isVerified && !showOtpLocal && (
-                    <div style={{ display: 'flex', gap: '0.5rem', maxWidth: '400px', margin: '0 auto', width: '100%' }}>
-                        <div style={{ position: 'relative', flex: '0 0 85px' }}>
-                            <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Code</label>
-                            <select
-                                className="glass-input"
-                                value={applicantData.countryCode}
-                                onChange={e => updateField({ countryCode: e.target.value })}
-                                style={{ paddingTop: '10px', paddingBottom: '10px', fontSize: '0.9rem' }}
-                            >
-                                {countryCodes.map(c => (
-                                    <option key={c.code} value={c.code}>{c.code}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div style={{ position: 'relative', flex: 1 }}>
-                            <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Mobile Number <span style={{ color: '#d89c3a' }}>*</span></label>
-                            <input
-                                type="tel"
-                                className="glass-input"
-                                value={applicantData.mobileNumber}
-                                onChange={e => updateField({ mobileNumber: formatPhoneNumber(e.target.value, applicantData.countryCode) })}
-                                placeholder="Mobile Number"
-                                required
-                                style={{ paddingTop: '12px', paddingBottom: '12px', textAlign: 'left' }}
-                            />
-                        </div>
-                    </div>
-                )}
-
-                {showOtpLocal && !isVerified && (
-                    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                        <label style={{ color: 'var(--bg-top)', fontSize: '0.9rem', fontWeight: 'bold' }}>Verify Mobile: {applicantData.countryCode} {applicantData.mobileNumber}</label>
-                        <input type="text" className="glass-input" value={otpLocal} onChange={e => setOtpLocal(e.target.value)} placeholder="OTP (1234)" maxLength={4} required style={{ maxWidth: '200px', textAlign: 'center' }} />
-                        <button type="button" onClick={handleResendOtpLocal} disabled={resendTimerLocal > 0} style={{ background: 'none', border: 'none', color: resendTimerLocal > 0 ? '#999' : '#d89c3a', cursor: 'pointer', fontSize: '0.85rem' }}>
-                            {resendTimerLocal > 0 ? `Resend in ${resendTimerLocal}s` : "Resend Code"}
-                        </button>
-                    </div>
-                )}
-
-                {isVerified && (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'var(--success)', padding: '0.5rem 0', fontWeight: '500' }}>
-                        ✓ {title} Verified
-                    </div>
-                )}
             </div>
         );
     };
@@ -204,15 +139,14 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
     const handleNext = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Primary Applicant Verification logic
         if (!data.isMobileVerified && !showMobileOtp) {
             if (!data.mobileNumber || data.mobileNumber.length < 7) {
-                setError('Please enter a valid primary applicant mobile number.');
+                setError('Please enter a valid mobile number.');
                 return;
             }
             setShowMobileOtp(true);
             setResendTimer(60);
-            setSuccessMessage('A verification code has been sent to the primary applicant.');
+            setSuccessMessage('A verification code has been sent.');
             setTimeout(() => setSuccessMessage(''), 3000);
             return;
         }
@@ -224,40 +158,8 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
                 setResendTimer(0);
                 setSuccessMessage('');
             } else {
-                setError('Invalid OTP for primary applicant. Please try 1234.');
+                setError('Invalid OTP. Please try 1234.');
                 return;
-            }
-        }
-
-        // Secondary Applicant Verification logic (if Joint)
-        if (data.accountType === 'Joint') {
-            if (!data.secondaryApplicant!.isMobileVerified && !showSecondaryOtp) {
-                if (!data.secondaryApplicant!.mobileNumber || data.secondaryApplicant!.mobileNumber.length < 7) {
-                    setError('Please enter a valid secondary applicant mobile number.');
-                    return;
-                }
-                setShowSecondaryOtp(true);
-                setSecondaryResendTimer(60);
-                setSuccessMessage('A verification code has been sent to the secondary applicant.');
-                setTimeout(() => setSuccessMessage(''), 3000);
-                return;
-            }
-
-            if (showSecondaryOtp && !data.secondaryApplicant!.isMobileVerified) {
-                if (secondaryOtp === '1234') {
-                    updateData({
-                        secondaryApplicant: {
-                            ...data.secondaryApplicant!,
-                            isMobileVerified: true
-                        }
-                    });
-                    setShowSecondaryOtp(false);
-                    setSecondaryResendTimer(0);
-                    setSuccessMessage('');
-                } else {
-                    setError('Invalid OTP for secondary applicant. Please try 1234.');
-                    return;
-                }
             }
         }
 
@@ -269,16 +171,15 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
             data.secondaryApplicant?.birthday &&
             data.secondaryApplicant?.gender &&
             data.secondaryApplicant?.maritalStatus &&
-            data.secondaryApplicant?.motherMaidenName &&
-            data.secondaryApplicant?.isMobileVerified
+            data.secondaryApplicant?.motherMaidenName
         );
 
         if (isPrimaryValid && isSecondaryValid) {
             onNext();
         } else if (!isPrimaryValid) {
-            setError('Please complete and verify all primary applicant details.');
+            setError('Please complete and verify applicant details.');
         } else {
-            setError('Please complete and verify all secondary applicant details.');
+            setError('Please complete secondary applicant details.');
         }
     };
 
@@ -339,37 +240,6 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
                     </label>
                 </div>
 
-                {/* Dynamic Note based on Account Type */}
-                <div style={{
-                    textAlign: 'center',
-                    marginTop: '-1rem',
-                    marginBottom: '1.5rem',
-                    padding: '0 1rem'
-                }}>
-                    <p style={{
-                        margin: 0,
-                        fontSize: '0.8rem',
-                        color: 'var(--text-muted)',
-                        fontStyle: 'italic',
-                        lineHeight: '1.4'
-                    }}>
-                        {data.accountType === 'Single' ? (
-                            <>
-                                <span style={{ fontWeight: '600' }}>$5 verification deposit total</span>
-                                <br />
-                                Applicant must complete verification
-                            </>
-                        ) : (
-                            <>
-                                <span style={{ fontWeight: '600' }}>$10 verification deposit total</span>
-                                <br />
-                                Both applicants must complete verification
-                                <br />
-                                Multiple addresses allowed
-                            </>
-                        )}
-                    </p>
-                </div>
 
                 <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: '600' }}>Basic Information</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
@@ -381,32 +251,72 @@ export function Step2BasicInfo({ data, updateData, onNext, onPrev }: Props) {
                 {renderApplicantFields(
                     data.accountType === 'Joint' ? "Primary Applicant" : "Applicant Details",
                     data,
-                    false,
-                    showMobileOtp,
-                    otp,
-                    setOtp,
-                    resendTimer,
-                    handleResendOtp,
-                    data.isMobileVerified
+                    false
                 )}
 
                 {data.accountType === 'Joint' && data.secondaryApplicant && renderApplicantFields(
                     "Secondary Applicant",
                     data.secondaryApplicant,
-                    true,
-                    showSecondaryOtp,
-                    secondaryOtp,
-                    setSecondaryOtp,
-                    secondaryResendTimer,
-                    () => {
-                        if (secondaryResendTimer > 0) return;
-                        setSecondaryOtp('');
-                        setSecondaryResendTimer(60);
-                        setSuccessMessage('A new verification code has been sent.');
-                        setTimeout(() => setSuccessMessage(''), 3000);
-                    },
-                    data.secondaryApplicant.isMobileVerified
+                    true
                 )}
+
+                {/* Consolidated Mobile Verification Section */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', marginBottom: '2.5rem', borderTop: '2px solid rgba(216, 156, 58, 0.1)', paddingTop: '2rem' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--bg-top)', fontWeight: '700', paddingBottom: '0.5rem' }}>
+                        Mobile Verification
+                    </h3>
+
+                    {!data.isMobileVerified && !showMobileOtp && (
+                        <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+                            <div style={{ position: 'relative', flex: '0 0 85px' }}>
+                                <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Code</label>
+                                <select
+                                    className="glass-input"
+                                    value={data.countryCode}
+                                    onChange={e => updateData({ countryCode: e.target.value })}
+                                    style={{ paddingTop: '10px', paddingBottom: '10px', fontSize: '0.9rem' }}
+                                >
+                                    {countryCodes.map(c => (
+                                        <option key={c.code} value={c.code}>{c.code}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div style={{ position: 'relative', flex: 1 }}>
+                                <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Mobile Number <span style={{ color: '#d89c3a' }}>*</span></label>
+                                <input
+                                    type="tel"
+                                    className="glass-input"
+                                    value={data.mobileNumber}
+                                    onChange={e => updateData({ mobileNumber: formatPhoneNumber(e.target.value, data.countryCode) })}
+                                    placeholder="Mobile Number"
+                                    required={!showMobileOtp}
+                                    style={{ paddingTop: '12px', paddingBottom: '12px', textAlign: 'left' }}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {showMobileOtp && !data.isMobileVerified && (
+                        <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                            <label style={{ color: 'var(--bg-top)', fontSize: '0.9rem', fontWeight: 'bold' }}>Verify Mobile: {data.countryCode} {data.mobileNumber}</label>
+                            <input type="text" className="glass-input" value={otp} onChange={e => setOtp(e.target.value)} placeholder="OTP (1234)" maxLength={4} required style={{ maxWidth: '200px', textAlign: 'center' }} />
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <button type="button" onClick={handleResendOtp} disabled={resendTimer > 0} style={{ background: 'none', border: 'none', color: resendTimer > 0 ? '#999' : '#d89c3a', cursor: 'pointer', fontSize: '0.85rem' }}>
+                                    {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend Code"}
+                                </button>
+                                <button type="button" onClick={() => { setShowMobileOtp(false); setOtp(''); }} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: '0.85rem' }}>
+                                    Change Number
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {data.isMobileVerified && (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'var(--success)', padding: '0.5rem 0', fontWeight: '500' }}>
+                            ✓ Mobile Number Verified
+                        </div>
+                    )}
+                </div>
 
                 {error && <div style={{ color: 'var(--error)', fontSize: '0.9rem', textAlign: 'center', marginBottom: '1rem' }}>{error}</div>}
                 {successMessage && <div style={{ color: 'green', fontSize: '0.9rem', textAlign: 'center', marginBottom: '1rem' }}>{successMessage}</div>}

@@ -13,6 +13,18 @@ export function Step4Identification({ data, updateData, onNext, onPrev }: Props)
     const [error, setError] = useState('');
     const [primarySsnFocused, setPrimarySsnFocused] = useState(false);
     const [secondarySsnFocused, setSecondarySsnFocused] = useState(false);
+    const countries = [
+        "United States",
+        "United Kingdom",
+        "Canada",
+        "Australia",
+        "India",
+        "Germany",
+        "France",
+        "Japan",
+        "UAE",
+        "Singapore"
+    ];
 
     const formatSsn = (val: string) => {
         const cleaned = (val || '').replace(/\D/g, '');
@@ -30,7 +42,7 @@ export function Step4Identification({ data, updateData, onNext, onPrev }: Props)
         e.preventDefault();
 
         const validateApplicant = (applicant: ApplicantDetails, label: string) => {
-            if (!applicant.idType || !applicant.idNumber || !applicant.idDocument) {
+            if (!applicant.idType || !applicant.idNumber || !applicant.idIssueCountry || !applicant.idDocument) {
                 return `Please provide identification details for ${label}.`;
             }
             if (applicant.isUsCitizen && (!applicant.ssn || applicant.ssn.length !== 11)) {
@@ -83,6 +95,22 @@ export function Step4Identification({ data, updateData, onNext, onPrev }: Props)
                     {title}
                 </h3>
 
+                <div style={{ position: 'relative' }}>
+                    <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>Issue Country <span style={{ color: '#d89c3a' }}>*</span></label>
+                    <select
+                        className="glass-input"
+                        value={applicant.idIssueCountry || ''}
+                        onChange={e => updateField({ idIssueCountry: e.target.value })}
+                        required
+                        style={{ paddingTop: '12px', paddingBottom: '12px', color: applicant.idIssueCountry ? 'inherit' : '#999', fontSize: applicant.idIssueCountry ? '0.95rem' : '0.8rem', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7em top 50%', backgroundSize: '.65em auto' }}
+                    >
+                        <option value="" disabled>Select Issue Country</option>
+                        {countries.map(country => (
+                            <option key={country} value={country}>{country}</option>
+                        ))}
+                    </select>
+                </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div style={{ position: 'relative' }}>
                         <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>ID Type <span style={{ color: '#d89c3a' }}>*</span></label>
@@ -93,12 +121,13 @@ export function Step4Identification({ data, updateData, onNext, onPrev }: Props)
                             required
                             style={{ paddingTop: '12px', paddingBottom: '12px', color: applicant.idType ? 'inherit' : '#999', fontSize: applicant.idType ? '0.95rem' : '0.8rem', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7em top 50%', backgroundSize: '.65em auto' }}
                         >
-                            <option value="" disabled>Select ID Type</option>
-                            <option value="US Citizenship id card">US Citizenship id card</option>
+                            <option value="">Select ID Type</option>
+                            <option value="National ID">National ID</option>
                             <option value="Passport">Passport</option>
-                            <option value="US military id card">US military id card</option>
-                            <option value="PIV card">PIV card</option>
-                            <option value="Driver's licence">Driver's licence</option>
+                            <option value="Driver's License">Driver's License</option>
+                            <option value="Military ID">Military ID</option>
+                            <option value="Voter ID">Voter ID</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
 
@@ -173,7 +202,7 @@ export function Step4Identification({ data, updateData, onNext, onPrev }: Props)
                     {applicant.isUsCitizen && (
                         <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
                             <div style={{ position: 'relative' }}>
-                                <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>SSN <span style={{ color: '#d89c3a' }}>*</span></label>
+                                <label style={{ position: 'absolute', top: '-8px', left: '10px', background: 'white', padding: '0 4px', fontSize: '0.75rem', color: '#999', zIndex: 1 }}>SSN / Tax ID <span style={{ color: '#d89c3a' }}>*</span></label>
                                 <input
                                     type="text"
                                     className="glass-input"
@@ -198,9 +227,6 @@ export function Step4Identification({ data, updateData, onNext, onPrev }: Props)
         <div className="animate-fade-in" style={{ width: '100%' }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: '600' }}>Identification & Citizenship</h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
-                    To securely Process your identity verification and open your account, a {data.accountType === 'Joint' ? '$10' : '$5'} fee is required.
-                </p>
             </div>
 
             <form onSubmit={handleNext} style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '450px', margin: '0 auto' }}>
@@ -221,6 +247,17 @@ export function Step4Identification({ data, updateData, onNext, onPrev }: Props)
                 )}
 
                 {error && <div style={{ color: 'var(--error)', fontSize: '0.9rem', textAlign: 'center', marginBottom: '1rem' }}>{error}</div>}
+
+                <p style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--text-muted)',
+                    textAlign: 'center',
+                    marginBottom: '1.5rem',
+                    lineHeight: '1.4',
+                    padding: '0 1rem'
+                }}>
+                    A $5 identity verification deposit is required ($10 for joint accounts). This amount will be credited to your account after successful verification.
+                </p>
 
                 <div className="form-actions" style={{ gap: '1rem' }}>
                     <button type="button" className="btn-secondary" style={{ flex: 1, minWidth: 'auto' }} onClick={onPrev}>
