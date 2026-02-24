@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { createPortal } from 'react-dom';
 import type { RegistrationState, Step } from '../types/registration';
 import { Step1EmailCapture } from './Step1EmailCapture';
 import { Step2BasicInfo } from './Step2BasicInfo';
@@ -97,73 +96,6 @@ export function RegistrationLayout() {
         }
     }, [currentStep, data.step]);
 
-    // Session Expiration Logic
-    const WARNING_THRESHOLD = 5 * 60 * 1000; // 5 minutes (adjustable)
-    const COUNTDOWN_SECONDS = 130; // 2 minutes 10 seconds
-
-    const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
-    const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
-    const lastActivityRef = useRef(Date.now());
-    const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-    const handleActivity = useCallback(() => {
-        if (!showTimeoutWarning) {
-            lastActivityRef.current = Date.now();
-        }
-    }, [showTimeoutWarning]);
-
-    const handleSessionExpire = useCallback(() => {
-        setData({ ...initialState, step: 1 });
-        navigate('/step/1', { replace: true });
-        setShowTimeoutWarning(false);
-        setCountdown(COUNTDOWN_SECONDS);
-        lastActivityRef.current = Date.now();
-    }, [navigate]);
-
-    // Track user inactivity
-    useEffect(() => {
-        const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
-        events.forEach(event => document.addEventListener(event, handleActivity));
-
-        const checkInactivity = setInterval(() => {
-            if (!showTimeoutWarning && Date.now() - lastActivityRef.current >= WARNING_THRESHOLD) {
-                setShowTimeoutWarning(true);
-                setCountdown(COUNTDOWN_SECONDS);
-            }
-        }, 1000);
-
-        return () => {
-            events.forEach(event => document.removeEventListener(event, handleActivity));
-            clearInterval(checkInactivity);
-        };
-    }, [handleActivity, showTimeoutWarning]);
-
-    // Handle the visual countdown and expiration
-    useEffect(() => {
-        if (showTimeoutWarning) {
-            countdownTimerRef.current = setInterval(() => {
-                setCountdown(prev => {
-                    if (prev <= 1) {
-                        handleSessionExpire();
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
-        } else {
-            if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-        }
-
-        return () => {
-            if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-        };
-    }, [showTimeoutWarning, handleSessionExpire]);
-
-    const handleContinueSession = () => {
-        setShowTimeoutWarning(false);
-        setCountdown(COUNTDOWN_SECONDS);
-        lastActivityRef.current = Date.now();
-    };
 
     const updateData = (fields: Partial<RegistrationState>) => {
         setData((prev) => ({ ...prev, ...fields }));
@@ -229,7 +161,7 @@ export function RegistrationLayout() {
                         motherMaidenName: 'Smith',
                         mobileNumber: '(555) 123-4567',
                         countryCode: '+1',
-                        isMobileVerified: true,
+                        isMobileVerified: false,
                         address: {
                             line1: '123 Test Blvd',
                             line2: 'Apt 4B',
@@ -366,74 +298,6 @@ export function RegistrationLayout() {
                 )}
             </div>
 
-            {/* Session Expiration Warning Popup */}
-            {showTimeoutWarning && createPortal(
-                <div style={{
-                    position: 'fixed',
-                    top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 2000,
-                    padding: '1rem'
-                }}>
-                    <div className="animate-fade-in" style={{
-                        backgroundColor: 'white',
-                        borderRadius: '8px',
-                        maxWidth: '400px',
-                        width: '100%',
-                        textAlign: 'center',
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                        overflow: 'hidden'
-                    }}>
-                        <div style={{ padding: '2.5rem 2rem' }}>
-                            <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#555', fontWeight: '500' }}>
-                                For your security
-                            </h2>
-                            <p style={{ color: '#666', fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
-                                Your session will timeout in {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}. If you wish to continue with your online membership application, click continue or your session will automatically expire.
-                            </p>
-                        </div>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderTop: '1px solid #eee' }}>
-                            <button
-                                onClick={handleSessionExpire}
-                                style={{
-                                    padding: '1.2rem',
-                                    background: 'none',
-                                    border: 'none',
-                                    borderRight: '1px solid #eee',
-                                    color: '#555',
-                                    fontWeight: '500',
-                                    cursor: 'pointer',
-                                    fontSize: '0.9rem'
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                            >
-                                Leave
-                            </button>
-                            <button
-                                onClick={handleContinueSession}
-                                style={{
-                                    padding: '1.2rem',
-                                    background: 'none',
-                                    border: 'none',
-                                    color: '#555',
-                                    fontWeight: '500',
-                                    cursor: 'pointer',
-                                    fontSize: '0.9rem'
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                            >
-                                Continue
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                , document.body)}
 
         </div>
     );
