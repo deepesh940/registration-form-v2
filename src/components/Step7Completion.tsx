@@ -46,10 +46,23 @@ export function Step7Completion({ data }: Props) {
                         <span style={{ color: 'var(--text-muted)' }}>Status</span>
                         <strong style={{ color: 'var(--bg-top)' }}>Under Review</strong>
                     </li>
-                    <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
-                        <span style={{ color: 'var(--text-muted)' }}>Applicant</span>
-                        <strong style={{ color: 'var(--text-main)' }}>{data.firstName} {data.lastName}</strong>
-                    </li>
+                    {data.accountType === 'Joint' ? (
+                        <>
+                            <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Primary Applicant</span>
+                                <strong style={{ color: 'var(--text-main)' }}>{data.firstName} {data.lastName}</strong>
+                            </li>
+                            <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Secondary Applicant</span>
+                                <strong style={{ color: 'var(--text-main)' }}>{data.secondaryApplicant?.firstName} {data.secondaryApplicant?.lastName}</strong>
+                            </li>
+                        </>
+                    ) : (
+                        <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>Applicant</span>
+                            <strong style={{ color: 'var(--text-main)' }}>{data.firstName} {data.lastName}</strong>
+                        </li>
+                    )}
                     <li style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
                         <span style={{ color: 'var(--text-muted)' }}>Email</span>
                         <strong style={{ color: 'var(--text-main)' }}>{data.email}</strong>
