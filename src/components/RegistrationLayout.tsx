@@ -174,6 +174,7 @@ export function RegistrationLayout() {
                         idType: "Driver's License",
                         idNumber: 'D12345678',
                         idIssueCountry: 'Nigeria',
+                        idDocument: 'id_front.jpg',
                         isUsCitizen: true,
                         ssn: '123-45-6789',
                         secondaryApplicant: {
