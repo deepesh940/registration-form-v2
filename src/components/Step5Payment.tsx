@@ -189,7 +189,7 @@ export function Step5Payment({ data, updateData, onNext, onPrev }: Props) {
                         Back
                     </button>
                     <button type="button" className="btn-primary" style={{ flex: 2, minWidth: 'auto' }} onClick={handlePayment} disabled={isProcessing || !validateCard()}>
-                        {isProcessing ? 'Processing...' : 'Pay $5.00'}
+                        {isProcessing ? 'Processing...' : `Pay ${data.accountType === 'Joint' ? '$10.00' : '$5.00'}`}
                     </button>
                 </div>
             )}

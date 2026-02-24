@@ -130,6 +130,9 @@ export function Step1EmailCapture({ data, updateData, onNext, onResume }: Props)
                                 required
                                 style={{ paddingTop: '12px', paddingBottom: '12px' }}
                             />
+                            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.4rem 0 0 0.2rem' }}>
+                                “A $5 identity verification deposit is required ($10 for joint accounts). This amount will be credited to your account after successful verification.”
+                            </p>
                         </div>
                     </div>
 
